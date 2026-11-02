@@ -1,0 +1,47 @@
+name: Windows executable
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: desktop-requirements.txt
+      - name: Build executable
+        shell: pwsh
+        run: .\build-windows.ps1
+      - name: Test packaged executable
+        shell: pwsh
+        run: |
+          $testHome = Join-Path $env:RUNNER_TEMP "ConsentLedgerSmoke"
+          New-Item -ItemType Directory -Force -Path $testHome | Out-Null
+          $env:LOCALAPPDATA = $testHome
+          try {
+            .\dist\ConsentLedger.exe --self-test
+            if ($LASTEXITCODE -ne 0) { throw "Packaged executable self-test failed." }
+            Get-FileHash .\dist\ConsentLedger.exe -Algorithm SHA256 |
+              ForEach-Object { "$($_.Hash)  ConsentLedger.exe" } |
+              Set-Content -Encoding ascii .\dist\SHA256SUMS.txt
+          }
+          finally {
+            Remove-Item -LiteralPath $testHome -Recurse -Force -ErrorAction SilentlyContinue
+          }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ConsentLedger-Windows-x64
+          path: |
+            dist/ConsentLedger.exe
+            dist/SHA256SUMS.txt
+          if-no-files-found: error

@@ -5,5 +5,8 @@ __pycache__/
 *.sqlite3
 /data/
 /staticfiles/
+/build/
+/dist/
+/*.spec
 .coverage
 htmlcov/

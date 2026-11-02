@@ -6,6 +6,18 @@ Registro auto-hospedado de consentimentos e descadastros para pequenos negócios
 
 Esta versão é um protótipo para avaliação, não um produto pronto para dados reais de clientes. O banco SQLite não oferece criptografia de campos pela aplicação; antes de uso comercial, faça revisão independente, proteja o armazenamento e os backups e estabeleça processo de retenção/exclusão.
 
+## Aplicativo executável para Windows
+
+O executável desktop inicia o painel local no navegador e aceita conexões **somente do próprio computador**. Ele não expõe o banco na internet. Na primeira abertura, crie o operador na janela de console. Banco e chave ficam em `%LOCALAPPDATA%\ConsentLedger`; faça uma cópia segura da pasta para preservar os registros e a chave. Não compartilhe essa pasta nem use dados reais de clientes antes de uma revisão de segurança.
+
+Para criar `dist\ConsentLedger.exe` em Windows x64 com Python 3.12:
+
+```powershell
+.\build-windows.ps1
+```
+
+Inicie `dist\ConsentLedger.exe` e mantenha a janela aberta enquanto usa o painel. Para encerrar, pressione `Ctrl+C` nessa janela. Este binário desktop é independente da VPS/Hostinger; o botão Hostinger é para a implantação Docker Compose documentada abaixo.
+
 ## Recursos do MVP
 
 - Contatos identificados por telefone no formato internacional E.164.
